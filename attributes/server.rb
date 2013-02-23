@@ -2,9 +2,9 @@ package_machine = node['kernel']['machine'] == "x86_64" ? "x86_64" : "x86"
 
 case node[:platform]
 when 'ubuntu','debian'
-  packaging = deb
+  packaging = "deb"
 when 'centos','redhat','fedora','amazon'
-  packaging = rpm
+  packaging = "rpm"
 end
 
 default['couchbase']['server']['edition'] = "community"
