@@ -29,7 +29,16 @@ remote_file File.join(Chef::Config[:file_cache_path], node['couchbase']['server'
   action :create_if_missing
 end
 
-dpkg_package File.join(Chef::Config[:file_cache_path], node['couchbase']['server']['package_file'])
+case node[:platform]
+when 'ubuntu','debian'
+  dpkg_package node['couchbase']['server']['package_file'] do
+	source File.join(Chef::Config[:file_cache_path], node['couchbase']['server']['package_file'])
+  end
+when 'centos','redhat','fedora','amazon'
+  rpm_package node['couchbase']['server']['package_file'] do
+	source File.join(Chef::Config[:file_cache_path], node['couchbase']['server']['package_file'])
+  end
+end
 
 service "couchbase-server" do
   supports :restart => true, :status => true
