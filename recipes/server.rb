@@ -31,6 +31,7 @@ end
 
 case node[:platform]
 when 'ubuntu','debian'
+  apt_package "libssl0.9.8"
   dpkg_package node['couchbase']['server']['package_file'] do
 	source File.join(Chef::Config[:file_cache_path], node['couchbase']['server']['package_file'])
   end
