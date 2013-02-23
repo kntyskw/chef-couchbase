@@ -36,6 +36,7 @@ when 'ubuntu','debian'
 	source File.join(Chef::Config[:file_cache_path], node['couchbase']['server']['package_file'])
   end
 when 'centos','redhat','fedora','amazon'
+  yum_package "openssl098e"
   rpm_package node['couchbase']['server']['package_file'] do
 	source File.join(Chef::Config[:file_cache_path], node['couchbase']['server']['package_file'])
   end
