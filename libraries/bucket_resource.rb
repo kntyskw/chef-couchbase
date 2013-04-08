@@ -3,7 +3,9 @@ require File.join(File.dirname(__FILE__), "credentials_attributes")
 
 class Chef
   class Resource
-    class CouchbaseBucket < Resource
+  class LWRPBase
+    #class CouchbaseBucket < Resource
+    class CouchbaseBucket < LWRPBase
       include Couchbase::CredentialsAttributes
 
       attribute :bucket, :kind_of => String, :name_attribute => true
@@ -31,8 +33,13 @@ class Chef
         super
         @action = :create
         @allowed_actions.push :create
-        @resource_name = :couchbase_bucket
+        if Chef::VERSION < '11'
+		@resource_name = :couchbase_bucket
+	else
+        	@resource_name = "CouchbaseBucket"
+	end
       end
     end
+  end
   end
 end

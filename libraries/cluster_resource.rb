@@ -3,7 +3,9 @@ require File.join(File.dirname(__FILE__), "credentials_attributes")
 
 class Chef
   class Resource
-    class CouchbaseCluster < Resource
+  class LWRPBase
+    #class CouchbaseCluster < Resource
+    class CouchbaseCluster < LWRPBase
       include Couchbase::CredentialsAttributes
 
       attribute :cluster, :kind_of => String, :name_attribute => true
@@ -16,8 +18,13 @@ class Chef
         super
         @action = :create_if_missing
         @allowed_actions.push :create_if_missing
-        @resource_name = :couchbase_cluster
+	if Chef::VERSION < '11'
+        	@resource_name = :couchbase_cluster
+	else
+        	@resource_name = "CouchbaseCluster"
+	end
       end
     end
+  end
   end
 end
