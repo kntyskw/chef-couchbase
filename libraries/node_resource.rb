@@ -3,24 +3,32 @@ require File.join(File.dirname(__FILE__), "credentials_attributes")
 
 class Chef
   class Resource
-  class LWRPBase
-    class CouchbaseNode < LWRPBase
+    class CouchbaseNode < Resource
       include Couchbase::CredentialsAttributes
 
-      attribute :id, :kind_of => String, :name_attribute => true
-      attribute :database_path, :kind_of => String, :default => "/opt/couchbase/var/lib/couchbase/data"
 
       def initialize(*)
         super
         @action = :modify
         @allowed_actions.push(:modify)
-        if Chef::VERSION < '11'
-        	@resource_name = :couchbase_node
-	else
-        	@resource_name = "CouchbaseNode"
-	end
+        @resource_name = :couchbase_node
+      end
+
+      def id(arg=nil)
+        set_or_return(
+          :id,
+          arg,
+          :kind_of => [ String ], :name_attribute => true
+        )
+      end
+
+      def database_path(arg=nil)
+        set_or_return(
+	  :database_path, 
+	  arg,
+	  :kind_of => String, :default => "/opt/couchbase/var/lib/couchbase/data"
+	)
       end
     end
-  end
   end
 end
