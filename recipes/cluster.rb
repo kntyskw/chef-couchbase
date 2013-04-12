@@ -25,6 +25,7 @@
 #
 
 couchbase_cluster "default" do
+  action [ :create_if_missing, :join_cluster_if_specified ]
   memory_quota_mb node['couchbase']['server']['memory_quota_mb']
   member_host_ip node['couchbase']['cluster']['member_host_ip']
   member_port node['couchbase']['cluster']['member_port']

@@ -22,6 +22,19 @@ class Chef
           Chef::Log.info "#{@new_resource} created"
         end
       end
+
+      def action_join_cluster_if_specified
+	if @current_resource.member_host_ip != @new_resource.member_host_ip
+	  post "/node/controller/doJoinCluster",
+		"clusterMemberHostIp" => @new_resource.member_host_ip,
+		"clusterMemberPort" => @new_resource.member_port,
+		"user" => @new_resource.username,
+		"password" => @new_resource.password
+	  @current_resource.member_host_ip @new_resource.member_host_ip
+          @new_resource.updated_by_last_action true
+          Chef::Log.info "#{@new_resource} merged with the existing cluster"
+        end
+      end
     end
   end
 end
