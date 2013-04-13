@@ -16,6 +16,10 @@ class Chef
       end
 
       def action_create_if_missing
+	unless is_cluster_member_host
+          	Chef::Log.info "Not the cluster member host. Will skip."
+		return
+	end
         unless @current_resource.exists
           post "/pools/#{@new_resource.cluster}", "memoryQuota" => @new_resource.memory_quota_mb
           @new_resource.updated_by_last_action true
@@ -24,7 +28,7 @@ class Chef
       end
 
       def action_join_cluster_if_specified
-	if @current_resource.member_host_ip != @new_resource.member_host_ip
+	unless is_cluster_member_host
 	  post "/node/controller/doJoinCluster",
 		"clusterMemberHostIp" => @new_resource.member_host_ip,
 		"clusterMemberPort" => @new_resource.member_port,
@@ -33,7 +37,38 @@ class Chef
 	  @current_resource.member_host_ip @new_resource.member_host_ip
           @new_resource.updated_by_last_action true
           Chef::Log.info "#{@new_resource} merged with the existing cluster"
+	else
+          	Chef::Log.info "I am the cluster member host. Will skip."
+		return
         end
+      end
+
+      def action_initiate_rebalance
+	  post "/node/controller/doJoinCluster",
+		"ejectedNodes" => "",
+		"knownNodes" => get_node_opt_names_in_cluster.join("&"),
+		"user" => @new_resource.username,
+		"password" => @new_resource.password
+          Chef::Log.info "rebalance for #{@new_resource} initiated"
+      end
+
+      def get_node_opt_names_in_cluster
+	cluster = JSON.parse(get "/pools/default")
+	node_opt_names = []
+	for node in cluster.nodes
+	  node_opt_names.push node.otpNode
+	end
+	return node_opt_names
+      end
+
+      def is_cluster_member_host
+	if node["couchbase"]["cluster"]["member_host_ip"] == "localhost" ||
+	   node["couchbase"]["cluster"]["member_host_ip"] == "127.0.0.1" ||
+	   node["couchbase"]["cluster"]["member_host_ip"] == "::1" ||
+	   node["couchbase"]["cluster"]["member_host_ip"] == node[:ipaddress] 
+	   return true
+	end
+	return false
       end
     end
   end

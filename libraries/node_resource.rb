@@ -6,28 +6,34 @@ class Chef
     class CouchbaseNode < Resource
       include Couchbase::CredentialsAttributes
 
+      def self.method_missing(meth, *args, &block)
+        if meth.to_s =~ /^attribute$/
+          self.__attribute(args[0], args[1])
+        else
+          super
+        end
+      end
+
+      def self.__attribute(attr_name, validation_opts={})
+        class_eval(<<-SHIM, __FILE__, __LINE__)
+                def #{attr_name}(arg=nil)
+                _set_or_return_#{attr_name}(arg)
+                end
+        SHIM
+
+        define_method("_set_or_return_#{attr_name.to_s}".to_sym) do |arg|
+          set_or_return(attr_name.to_sym, arg, validation_opts)
+        end
+      end
+
+      attribute :id, :kind_of => [ String ], :name_attribute => true
+      attribute :database_path, :kind_of => String, :default => "/opt/couchbase/var/lib/couchbase/data"
 
       def initialize(*)
         super
         @action = :modify
         @allowed_actions.push(:modify)
         @resource_name = :couchbase_node
-      end
-
-      def id(arg=nil)
-        set_or_return(
-          :id,
-          arg,
-          :kind_of => [ String ], :name_attribute => true
-        )
-      end
-
-      def database_path(arg=nil)
-        set_or_return(
-	  :database_path, 
-	  arg,
-	  :kind_of => String, :default => "/opt/couchbase/var/lib/couchbase/data"
-	)
       end
     end
   end
