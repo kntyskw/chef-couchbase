@@ -45,7 +45,6 @@ end
 service "couchbase-server" do
   supports :restart => true, :status => true
   action [:enable, :start]
-  sleep 3
 end
 
 directory node['couchbase']['server']['log_dir'] do
@@ -80,6 +79,7 @@ couchbase_node "self" do
 
   username node['couchbase']['server']['username']
   password node['couchbase']['server']['password']
+  retries 3
 end
 
 couchbase_settings "web" do

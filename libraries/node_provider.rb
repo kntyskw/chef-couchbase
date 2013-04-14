@@ -28,12 +28,19 @@ class Chef
       end
 
       def node_data
-        @node_data ||= begin
-          response = get "/nodes/#{@new_resource.id}"
-          Chef::Log.error response.body unless response.kind_of?(Net::HTTPSuccess) || response.body.empty?
-          response.value
-          JSONCompat.from_json response.body
-        end
+        retry_count = 0
+        @node_data ||= 
+          begin
+            response = get "/nodes/#{@new_resource.id}"
+            Chef::Log.error response.body unless response.kind_of?(Net::HTTPSuccess) || response.body.empty?
+            response.value
+            JSONCompat.from_json response.body
+          rescue
+            sleep 1
+            retry_count += 1
+            retry if retry_count < 3
+            response.value
+          end
       end
     end
   end
