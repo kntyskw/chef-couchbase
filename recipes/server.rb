@@ -30,21 +30,22 @@ remote_file File.join(Chef::Config[:file_cache_path], node['couchbase']['server'
 end
 
 case node['platform']
-when 'ubuntu','debian'
-  apt_package "libssl0.9.8"
-  dpkg_package node['couchbase']['server']['package_file'] do
-	source File.join(Chef::Config[:file_cache_path], node['couchbase']['server']['package_file'])
+  when 'ubuntu','debian'
+    apt_package "libssl0.9.8"
+    dpkg_package node['couchbase']['server']['package_file'] do
+	  source File.join(Chef::Config[:file_cache_path], node['couchbase']['server']['package_file'])
   end
-when 'centos','redhat','fedora','amazon', 'scientific'
-  yum_package "openssl098e"
-  rpm_package node['couchbase']['server']['package_file'] do
-	source File.join(Chef::Config[:file_cache_path], node['couchbase']['server']['package_file'])
+  when 'centos','redhat','fedora','amazon', 'scientific'
+    yum_package "openssl098e"
+    rpm_package node['couchbase']['server']['package_file'] do
+	  source File.join(Chef::Config[:file_cache_path], node['couchbase']['server']['package_file'])
   end
 end
 
 service "couchbase-server" do
   supports :restart => true, :status => true
   action [:enable, :start]
+  sleep 3
 end
 
 directory node['couchbase']['server']['log_dir'] do
@@ -79,6 +80,7 @@ couchbase_node "self" do
 
   username node['couchbase']['server']['username']
   password node['couchbase']['server']['password']
+  retries 3
 end
 
 couchbase_settings "web" do

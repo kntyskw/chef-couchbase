@@ -141,21 +141,36 @@ describe Chef::Provider::CouchbaseCluster do
   end
 
   describe "#action_join_cluster_if_specified" do
-    context "I am not the master" do
-      let :new_resource do
-        stub({
-          :member_host_ip => "10.0.0.1",
-          :member_port => 8091,
-          :my_ip => "127.0.0.1",
-          :username => "Administrator",
-          :password => "password",
-          :updated_by_last_action => nil,
-        })
-      end
+    let :new_resource do
+      stub({
+        :member_host_ip => "10.0.0.1",
+        :member_port => 8091,
+        :my_ip => "127.0.0.1",
+        :username => "Administrator",
+        :password => "password",
+        :updated_by_last_action => nil,
+       })
+    end
+  
+    context "I am not the master and not yet part of the cluster" do
 
       let! :join_cluster_request do
         stub_request(:post, "#{base_uri}/node/controller/doJoinCluster")
             .with(:body => {"clusterMemberHostIp"=>"10.0.0.1", "clusterMemberPort" => "8091", "password"=>"password", "user"=>"Administrator"})
+      end
+
+      it "POSTs the Management REST API to initiate the rebalance" do
+        provider.action_join_cluster_if_specified
+        join_cluster_request.should have_been_made.once
+      end
+    end
+
+    context "I am not the master, but already a part of the cluster" do
+
+      let! :join_cluster_request do
+        stub_request(:post, "#{base_uri}/node/controller/doJoinCluster")
+            .with(:body => {"clusterMemberHostIp"=>"10.0.0.1", "clusterMemberPort" => "8091", "password"=>"password", "user"=>"Administrator"})
+            .to_return(fixture("do_join_cluster_400.http"))
       end
 
       it "POSTs the Management REST API to initiate the rebalance" do
@@ -174,7 +189,7 @@ describe Chef::Provider::CouchbaseCluster do
 
       let! :cluster_rebalance_request do
         stub_request(:post, "#{base_uri}/controller/rebalance")
-            .with(:body => {"ejectedNodes"=>"", "knownNodes"=>"ns_1@10.146.33.227&ns_1@10.148.59.33", "password"=>"password", "user"=>"Administrator"})
+            .with(:body => {"ejectedNodes"=>"", "knownNodes"=>"ns_1@10.146.33.227,ns_1@10.148.59.33", "password"=>"password", "user"=>"Administrator"})
       end
 
       it "GETs the Management REST API to get the cluster status" do

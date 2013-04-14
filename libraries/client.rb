@@ -13,6 +13,11 @@ module Couchbase
       response
     end
 
+    def post_no_error_check(path, params)
+      response = Net::HTTP.post_form(uri_from_path(path), params)
+      response
+    end
+
     def get(path)
       uri = uri_from_path path
 

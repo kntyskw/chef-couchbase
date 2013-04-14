@@ -26,6 +26,7 @@ class Chef
         end
       end
 
+      attribute :retries, :kind_of => Integer
       attribute :id, :kind_of => [ String ], :name_attribute => true
       attribute :database_path, :kind_of => String, :default => "/opt/couchbase/var/lib/couchbase/data"
 

@@ -29,11 +29,17 @@ class Chef
 
       def action_join_cluster_if_specified
         unless is_cluster_member_host
-          post "/node/controller/doJoinCluster",
+          response = post_no_error_check "/node/controller/doJoinCluster",
             "clusterMemberHostIp" => @new_resource.member_host_ip,
             "clusterMemberPort" => @new_resource.member_port,
             "user" => @new_resource.username,
             "password" => @new_resource.password
+          unless response.kind_of? Net::HTTPSuccess
+            unless response.body.include?("Node is already part of cluster")
+              Chef::Log.error response.body
+              return
+            end
+          end
           @new_resource.updated_by_last_action true
           Chef::Log.info "#{@new_resource} joined the existing cluster"
         else
@@ -44,7 +50,7 @@ class Chef
       def action_initiate_rebalance
         post "/controller/rebalance",
           "ejectedNodes" => "",
-          "knownNodes" => get_node_opt_names_in_cluster.join("&"),
+          "knownNodes" => get_node_opt_names_in_cluster.join(","),
           "user" => @new_resource.username,
           "password" => @new_resource.password
         Chef::Log.info "rebalance for #{@new_resource} initiated"
