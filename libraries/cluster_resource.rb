@@ -37,9 +37,9 @@ class Chef
         super
         @action = :create_if_missing
         @allowed_actions.push :create_if_missing 
-	@allowed_actions.push :join_cluster_if_specified
+        @allowed_actions.push :join_cluster_if_specified
+        @allowed_actions.push :initiate_rebalance
         @resource_name = :couchbase_cluster
-
       end
     end
   end

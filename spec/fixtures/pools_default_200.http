@@ -1,0 +1,108 @@
+HTTP/1.1 200 OK
+Server: Couchbase Server 2.0.0-1976-rel-community
+Pragma: no-cache
+Date: Sun, 14 Apr 2013 05:17:12 GMT
+Content-Type: application/json
+Content-Length: 3438
+Cache-Control: no-cache
+
+{
+    "storageTotals": {
+        "ram": {
+            "total": 1251844096,
+            "quotaTotal": 1000341504,
+            "quotaUsed": 0,
+            "used": 1146560512,
+            "usedByData": 0
+        },
+        "hdd": {
+            "total": 16910237696,
+            "quotaTotal": 16910237696,
+            "used": 3804803481,
+            "usedByData": 0,
+            "free": 12513575896
+        }
+    },
+    "name": "default",
+    "alerts": [],
+    "alertsSilenceURL": "/controller/resetAlerts?token=0&uuid=882721915c6817a50814cc60f11c310f",
+    "nodes": [
+        {
+            "systemStats": {
+                "cpu_utilization_rate": 0.5050505050505051,
+                "swap_total": 0,
+                "swap_used": 0
+            },
+            "interestingStats": {},
+            "uptime": "245183",
+            "memoryTotal": 625922048,
+            "memoryFree": 48250880,
+            "mcdMemoryReserved": 477,
+            "mcdMemoryAllocated": 477,
+            "couchApiBase": "http://10.146.33.227:8092/",
+            "otpNode": "ns_1@10.146.33.227",
+            "otpCookie": "zfcwlmrihvsoojxu",
+            "clusterMembership": "active",
+            "status": "healthy",
+            "hostname": "10.146.33.227:8091",
+            "clusterCompatibility": 131072,
+            "version": "2.0.0-1976-rel-community",
+            "os": "x86_64-unknown-linux-gnu",
+            "ports": {
+                "proxy": 11211,
+                "direct": 11210
+            }
+        },
+        {
+            "systemStats": {
+                "cpu_utilization_rate": 39.04109589041096,
+                "swap_total": 0,
+                "swap_used": 0
+            },
+            "interestingStats": {},
+            "uptime": "101447",
+            "memoryTotal": 625922048,
+            "memoryFree": 57032704,
+            "mcdMemoryReserved": 477,
+            "mcdMemoryAllocated": 477,
+            "couchApiBase": "http://10.148.59.33:8092/",
+            "otpNode": "ns_1@10.148.59.33",
+            "otpCookie": "zfcwlmrihvsoojxu",
+            "clusterMembership": "active",
+            "status": "healthy",
+            "thisNode": true,
+            "hostname": "10.148.59.33:8091",
+            "clusterCompatibility": 131072,
+            "version": "2.0.0-1976-rel-community",
+            "os": "x86_64-unknown-linux-gnu",
+            "ports": {
+                "proxy": 11211,
+                "direct": 11210
+            }
+        }
+    ],
+    "buckets": {
+        "uri": "/pools/default/buckets?v=16394016&uuid=882721915c6817a50814cc60f11c310f"
+    },
+    "remoteClusters": {
+        "uri": "/pools/default/remoteClusters?uuid=882721915c6817a50814cc60f11c310f",
+        "validateURI": "/pools/default/remoteClusters?just_validate=1"
+    },
+    "controllers": {
+        "addNode": {
+            "uri": "/controller/addNode?uuid=882721915c6817a50814cc60f11c310f"
+        },
+        "rebalance": {
+            "uri": "/controller/rebalance?uuid=882721915c6817a50814cc60f11c310f"
+        },
+        "failOver": {
+            "uri": "/controller/failOver?uuid=882721915c6817a50814cc60f11c310f"
+        },
+        "reAddNode": {
+            "uri": "/controller/reAddNode?uuid=882721915c6817a50814cc60f11c310f"
+        },
+        "ejectNode": {
+            "uri": "/controller/ejectNode?uuid=882721915c6817a50814cc60f11c310f"
+        }
+    }
+}

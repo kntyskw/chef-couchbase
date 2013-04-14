@@ -1,7 +1,7 @@
 require "spec_helper"
 require "cluster_provider"
 require "cluster_resource"
-
+ 
 describe Chef::Provider::CouchbaseCluster do
   let(:provider) { described_class.new(new_resource, stub("run_context")) }
   let(:base_uri) { "#{new_resource.username}:#{new_resource.password}@localhost:8091" }
@@ -137,6 +137,55 @@ describe Chef::Provider::CouchbaseCluster do
       let(:memory_quota_mb) { new_resource.memory_quota_mb * 2 }
       subject { provider.action_create_if_missing }
       it_should_behave_like "a no op provider action"
+    end
+  end
+
+  describe "#action_join_cluster_if_specified" do
+    context "I am not the master" do
+      let :new_resource do
+        stub({
+          :member_host_ip => "10.0.0.1",
+          :member_port => 8091,
+          :my_ip => "127.0.0.1",
+          :username => "Administrator",
+          :password => "password",
+          :updated_by_last_action => nil,
+        })
+      end
+
+      let! :join_cluster_request do
+        stub_request(:post, "#{base_uri}/node/controller/doJoinCluster")
+            .with(:body => {"clusterMemberHostIp"=>"10.0.0.1", "clusterMemberPort" => "8091", "password"=>"password", "user"=>"Administrator"})
+      end
+
+      it "POSTs the Management REST API to initiate the rebalance" do
+        provider.action_join_cluster_if_specified
+        join_cluster_request.should have_been_made.once
+      end
+    end
+  end
+
+  describe "#action_initiate_rebalance" do
+    context "rebalance needed" do
+      let! :cluster_status_request do
+        stub_request(:get, "#{base_uri}/pools/default")
+            .to_return(fixture("pools_default_200.http"))
+      end
+
+      let! :cluster_rebalance_request do
+        stub_request(:post, "#{base_uri}/controller/rebalance")
+            .with(:body => {"ejectedNodes"=>"", "knownNodes"=>"ns_1@10.146.33.227&ns_1@10.148.59.33", "password"=>"password", "user"=>"Administrator"})
+      end
+
+      it "GETs the Management REST API to get the cluster status" do
+        provider.action_initiate_rebalance
+        cluster_status_request.should have_been_made.once
+      end
+
+      it "POSTs the Management REST API to initiate the rebalance" do
+        provider.action_initiate_rebalance
+        cluster_rebalance_request.should have_been_made.once
+      end
     end
   end
 end
