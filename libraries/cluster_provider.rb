@@ -56,16 +56,17 @@ class Chef
 	cluster = JSON.parse(get "/pools/default")
 	node_opt_names = []
 	for node in cluster.nodes
-	  node_opt_names.push node.otpNode
+	  node_opt_names.push node['otpNode']
 	end
 	return node_opt_names
       end
 
       def is_cluster_member_host
-	if node["couchbase"]["cluster"]["member_host_ip"] == "localhost" ||
-	   node["couchbase"]["cluster"]["member_host_ip"] == "127.0.0.1" ||
-	   node["couchbase"]["cluster"]["member_host_ip"] == "::1" ||
-	   node["couchbase"]["cluster"]["member_host_ip"] == node[:ipaddress] 
+	if @new_resource.member_host_ip == "localhost" ||
+	   @new_resource.member_host_ip == "127.0.0.1" ||
+	   @new_resource.member_host_ip == "::1" ||
+	   @new_resource.member_host_ip == "::1" ||
+	   @new_resource.member_host_ip == @new_resource.my_ip
 	   return true
 	end
 	return false

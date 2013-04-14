@@ -10,6 +10,9 @@ describe Chef::Provider::CouchbaseCluster do
     stub({
       :name => "my new pool",
       :cluster => "default",
+      :member_host_ip => "127.0.0.1",
+      :member_port => 8091,
+      :my_ip => "127.0.0.1",
       :username => "Administrator",
       :password => "password",
       :memory_quota_mb => 256,

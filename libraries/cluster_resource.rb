@@ -29,6 +29,7 @@ class Chef
       attribute :cluster, :kind_of => String, :name_attribute => true
       attribute :member_host_ip, :kind_of => String, :name_attribute => true
       attribute :member_port, :kind_of => Integer, :name_attribute => true
+      attribute :my_ip, :kind_of => String, :name_attribute => true
       attribute :exists, :kind_of => [TrueClass, FalseClass], :required => true
       attribute :memory_quota_mb, :kind_of => Integer, :required => true, :callbacks => { "must be at least 256" => lambda { |quota| quota >= 256 } }
 

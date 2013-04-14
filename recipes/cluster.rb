@@ -29,6 +29,7 @@ couchbase_cluster "default" do
   memory_quota_mb node['couchbase']['server']['memory_quota_mb']
   member_host_ip node['couchbase']['cluster']['member_host_ip']
   member_port node['couchbase']['cluster']['member_port']
+  my_ip node['ipaddress']
 
   username node['couchbase']['server']['username']
   password node['couchbase']['server']['password']

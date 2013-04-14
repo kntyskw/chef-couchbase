@@ -1,6 +1,7 @@
 require "spec_helper"
 require "node_resource"
 require "node_provider"
+require "securerandom"
 
 describe Chef::Provider::CouchbaseNode do
   let(:provider) { described_class.new(new_resource, stub("run_context")) }
