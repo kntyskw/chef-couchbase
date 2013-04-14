@@ -80,7 +80,6 @@ couchbase_node "self" do
 
   username node['couchbase']['server']['username']
   password node['couchbase']['server']['password']
-  retries 3
 end
 
 couchbase_settings "web" do
