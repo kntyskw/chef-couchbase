@@ -2,7 +2,7 @@
 # Cookbook Name:: couchbase
 # Recipe:: client
 #
-# Copyright 2012, getaroom
+# Copyright 2013, kntyskw
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -24,17 +24,30 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-package_machine = node['kernel']['machine'] == "i386" ? "i386" : "amd64"
+if platform_family?('rhel')
+	package_machine = node['kernel']['machine'] == "i386" ? "i386" : "x86_64"
+	yum_repository "couchbase" do
+		description "Couchbase yum repository"
+		url node['couchbase']['repository']['yum']['centos6'][package_machine]
+		mirrorlist true
+		enabled 1
+	end
 
-%w(libvbucket libcouchbase).each do |lib|
-  %w(1 -dev).each do |package_suffix|
-    package_file = "#{lib}#{package_suffix}_#{node['couchbase'][lib]['version']}_#{package_machine}.deb"
+	yum_package "libcouchbase2" 
+	yum_package "libcouchbase-devel" 
+	yum_package "libvbucket"
+		
+elsif platform_family?('debian')
+	if platform?('ubuntu')
+		version = node['platform_version']
+		apt_repository "couchbase" do
+			description "Couchbase apt repository"
+			url node['couchbase']['repository']['apt']['ubuntu'][version]
+		end
+	end
 
-    remote_file File.join(Chef::Config[:file_cache_path], package_file) do
-      source "#{node['couchbase'][lib]['package_base_url']}/#{package_file}"
-      action :create_if_missing
-    end
-
-    dpkg_package File.join(Chef::Config[:file_cache_path], package_file)
-  end
+	apt_package "libcouchbase2" 
+	apt_package "libcouchbase-devel" 
+	apt_package "libvbucket"
 end
+

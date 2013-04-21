@@ -1,9 +1,8 @@
 package_machine = node['kernel']['machine'] == "x86_64" ? "x86_64" : "x86"
 
-case node['platform']
-when 'ubuntu','debian'
+if platform_family?('rhel')
   packaging = "deb"
-when 'centos','redhat','fedora','amazon', 'scientific'
+else
   packaging = "rpm"
 end
 

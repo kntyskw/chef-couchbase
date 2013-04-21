@@ -1,7 +1,7 @@
-codename = %w(oneiric lucid).include?(node['lsb']['codename']) ? node['lsb']['codename'] : "oneiric"
-
-default['couchbase']['libcouchbase']['version'] = "1.0.4-1"
-default['couchbase']['libvbucket']['version'] = "1.8.0.4-1"
-
-default['couchbase']['libcouchbase']['package_base_url'] = "http://packages.couchbase.com/ubuntu/pool/#{codename}/main/libc/libcouchbase"
-default['couchbase']['libvbucket']['package_base_url'] = "http://packages.couchbase.com/ubuntu/pool/#{codename}/main/libv/libvbucket"
+default['couchbase']['repository']['yum']['centos6']['i386'] = "http://packages.couchbase.com/rpm/couchbase-centos62-i686.repo"
+default['couchbase']['repository']['yum']['centos6']['x86_64'] = "http://packages.couchbase.com/rpm/couchbase-centos62-x86_64.repo"
+default['couchbase']['repository']['yum']['centos5']['i386'] = "http://packages.couchbase.com/rpm/couchbase-centos55-i386.repo"
+default['couchbase']['repository']['yum']['centos5']['x86_64'] = "http://packages.couchbase.com/rpm/couchbase-centos55-x86_64.repo"
+default['couchbase']['repository']['apt']['ubuntu']['12.04'] = "http://packages.couchbase.com/ubuntu/couchbase-ubuntu1204.list"
+default['couchbase']['repository']['apt']['ubuntu']['11.10'] = "http://packages.couchbase.com/ubuntu/couchbase-ubuntu1110.list"
+default['couchbase']['repository']['apt']['ubuntu']['10.04'] = "http://packages.couchbase.com/ubuntu/couchbase-ubuntu1004.list"
