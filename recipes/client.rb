@@ -23,31 +23,46 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-
 if platform_family?('rhel')
+	execute 'reload-external-yum-cache' do
+		command 'yum makecache'
+		action :nothing
+	end
+	 
+	ruby_block "reload-internal-yum-cache" do
+		block do
+		  Chef::Provider::Package::Yum::YumCache.instance.reload
+		end
+		action :nothing
+	end
+	 
 	package_machine = node['kernel']['machine'] == "i386" ? "i386" : "x86_64"
-	yum_repository "couchbase" do
-		description "Couchbase yum repository"
-		url node['couchbase']['repository']['yum']['centos6'][package_machine]
-		mirrorlist true
-		enabled 1
+
+	remote_file '/etc/yum.repos.d/foo.repo' do
+		source node['couchbase']['repository']['yum']['centos6'][package_machine]
+		mode '00644'
+		action :create_if_missing
+		notifies :run, resources(:execute => 'reload-external-yum-cache'), :immediately
+		notifies :create, resources(:ruby_block => 'reload-internal-yum-cache'), :immediately
 	end
 
+	yum_package "libevent" 
 	yum_package "libcouchbase2" 
 	yum_package "libcouchbase-devel" 
-	yum_package "libvbucket"
+	yum_package "libvbucket1"
 		
 elsif platform_family?('debian')
 	if platform?('ubuntu')
-		version = node['platform_version']
+		codename = node['lsb']['codename']
 		apt_repository "couchbase" do
-			description "Couchbase apt repository"
-			url node['couchbase']['repository']['apt']['ubuntu'][version]
+			uri "http://packages.couchbase.com/ubuntu"
+			distribution codename
+			components [codename, "#{codename}/main"]
+			key "http://packages.couchbase.com/ubuntu/couchbase.key"
 		end
 	end
 
 	apt_package "libcouchbase2" 
-	apt_package "libcouchbase-devel" 
-	apt_package "libvbucket"
+	apt_package "libcouchbase-dev" 
 end
 
