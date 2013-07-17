@@ -24,6 +24,7 @@ default['couchbase']['server']['username'] = ""
 default['couchbase']['server']['password'] = ""
 
 default['couchbase']['server']['memory_quota_mb'] = Couchbase::MaxMemoryQuotaCalculator.from_node(node).in_megabytes
+default['couchbase']['default_bucket']['memory_quota_mb'] = 100
 
 default['couchbase']['cluster']['member_host_ip'] = "127.0.0.1"
 default['couchbase']['cluster']['member_port'] = 8091
