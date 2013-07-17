@@ -33,13 +33,13 @@ case node['platform']
   when 'ubuntu','debian'
     apt_package "libssl0.9.8"
     dpkg_package node['couchbase']['server']['package_file'] do
-	  source File.join(Chef::Config[:file_cache_path], node['couchbase']['server']['package_file'])
-  end
+	    source File.join(Chef::Config[:file_cache_path], node['couchbase']['server']['package_file'])
+    end
   when 'centos','redhat','fedora','amazon', 'scientific'
     yum_package "openssl098e"
     rpm_package node['couchbase']['server']['package_file'] do
-	  source File.join(Chef::Config[:file_cache_path], node['couchbase']['server']['package_file'])
-  end
+	    source File.join(Chef::Config[:file_cache_path], node['couchbase']['server']['package_file'])
+    end
 end
 
 service "couchbase-server" do

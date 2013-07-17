@@ -1,9 +1,13 @@
 package_machine = node['kernel']['machine'] == "x86_64" ? "x86_64" : "x86"
 
-if platform_family?('rhel')
-  packaging = "rpm"
-else
-  packaging = "deb"
+# platform_family? is not available on old chef and opsworks
+# if platform_family?('rhel')
+
+case node['platform']
+  when 'centos','redhat','fedora','amazon','scientific'
+    packaging = "rpm"
+  when 'debian','ubuntu'
+    packaging = "deb"
 end
 
 default['couchbase']['server']['edition'] = "community"

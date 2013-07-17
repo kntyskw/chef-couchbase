@@ -23,10 +23,17 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-if platform_family?('rhel')
+case node['platform']
+  when 'centos','redhat','fedora','amazon', 'scientific'
+    platform_family = 'rhel'
+  when 'debian', 'ubuntu'
+    platform_family = 'debian'
+end
+
+if platform_family == 'rhel'
 	execute 'reload-external-yum-cache' do
-		command 'yum makecache'
-		action :nothing
+	 command 'yum makecache'
+	 action :nothing
 	end
 	 
 	ruby_block "reload-internal-yum-cache" do
@@ -51,7 +58,7 @@ if platform_family?('rhel')
 	yum_package "libcouchbase-devel" 
 	yum_package "libvbucket1"
 		
-elsif platform_family?('debian')
+elsif platform_family == 'debian'
 	if platform?('ubuntu')
 		codename = node['lsb']['codename']
 		apt_repository "couchbase" do
