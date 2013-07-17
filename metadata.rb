@@ -6,8 +6,11 @@ description      "Installs/Configures Couchbase"
 long_description IO.read(File.join(File.dirname(__FILE__), "README.md"))
 version          "1.0.0"
 
+supports "amazon"
+supports "centos"
 supports "debian"
 supports "ubuntu"
 
 recipe "couchbase::server", "Installs couchbase-server"
 recipe "couchbase::client", "Installs libcouchbase"
+recipe "couchbase::cluster", "Configures couchbasecluster"
